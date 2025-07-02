@@ -1,0 +1,93 @@
+一、请求传参：
+1.url?userid=xxx&username=xxx
+2.restful:/user/info
+
+//接受前端传参
+	//1.user/info?userid=10086&username=hff
+	ginServer.GET("/user/info", func(ctx *gin.Context) {
+		userid := ctx.Query("userid")
+		//返回给前端
+		ctx.JSON(200, gin.H{
+			"userid": userid,
+		})
+	})
+
+	//2.RESTFUL:
+	ginServer.GET("/user/info/:userid/:username", func(ctx *gin.Context) {
+		userid := ctx.Param("userid")
+		username := ctx.Param("username")
+		ctx.JSON(200, gin.H{
+			"userid":   userid,
+			"username": username,
+		})
+	})
+
+gin.H{
+  k,v
+}
+
+二、JSON：前后端数据交换标准格式，以键值对的形式组织。
+JSON 就是用字符串来表示 Javascript 的对象和数组-----！序列化（将对象转为str）
+1.对象结构在 JSON 中表示为 { } 括起来的内容： { key: value, key: value, … }
+key 必须是使用英文的双引号包裹的字符串，value 的数据类型可以是数字、字符串、布尔值、null、数组、对象6种类型。
+2.数组结构在 JSON 中表示为 [ ] 括起来的内容。数据结构为 [ "java", "javascript", 30, true … ] 。数组中数据的类型可以是数字、字符串、布尔值、null、数组、对象6种类型。
+
+[POST用来新建资源]
+	//前端给后端传json
+	//1.接受前端请求
+	ginServer.POST("/requires", func(ctx *gin.Context) {
+		//获取数据，都存储在request.body里面
+		b, _ := ctx.GetRawData() //第二个返回值 _ 是 error 类型的错误信息，通过 _ 显式地“丢弃”了它
+		//map对象去接受这个数据
+
+		//go中的object用空接口表示，可以表示任何类型的值
+		var m map[string]interface{}
+		//指针解析，忽略err
+		_ = json.Unmarshal(b, &m)
+		//将序列化请求输出
+		ctx.JSON(200, m)
+	})
+ 
+三、路由：
+通过url对应处理方法
+路由组：
+	//路由组
+	userGroup :=ginServer.Group("/")
+	{
+		userGroup.GET("/add",func(ctx *gin.Context) {
+			
+		})
+		userGroup.GET("/encryption",func(ctx *gin.Context) {
+			
+		})
+	}
+
+ 四、中间件：处理请求之前/后的工作，登录授权、验证。。。
+ //自定义中间件,自定义myHandler办法，返回gin.HandlerFunc
+func myHandler()(gin.HandlerFunc){
+	return func(ctx *gin.Context) {
+		//后续只要调用这个中间件都可以拿到这个参数z值,GET里面的func之前。
+		ctx.Set("usersession","userid-1")
+		if {
+			ctx.Next()//放行
+		}
+		ctx.Abort()//拦截
+	}
+}
+...
+	ginServer.GET("/user/info",myHandler(), func(ctx *gin.Context) {
+		//取中间件定义的值
+		usersession := ctx.MustGet("usersession").(string)
+		log.Println("======",usersession)
+  
+		userid := ctx.Query("userid")
+		//返回给前端
+		ctx.JSON(200, gin.H{
+			"userid": userid,
+		})
+	})
+ 
+ 
+ 
+
+
