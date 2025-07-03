@@ -1,0 +1,13 @@
+为了实现在GO中使用数据库：取代sql语句，用orm编写
+
+ORM:
+现实事物--抽象化--对象Object
+关系型数据库--相同类型的储存在一张表里面--Relational
+将对象在go中作为一个结构体，和数据库中的关系，有一个映射关系Mapping
+GO:实例--MySQL：一条数据
+
+1.在本身代码中嵌入SQL语句：insert into userinfo values(1,"kimi"..)
+2.GORM: orm.Create(&u1)
+
+
+
