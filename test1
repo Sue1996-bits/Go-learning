@@ -1,0 +1,40 @@
+由ai生成框架信息：
+项目目录/
+├── main.go          // 项目入口：配置路由、启动服务
+├── controllers/     // 控制器：处理请求、调用逻辑
+├── models/          // 模型：数据库结构和操作
+├── utils/           // 工具类：加密、解密等功能函数
+├── storage/uploads/ // 保存上传的图片
+
+内部逻辑为：
+main.go
+   ↓ 注册路由
+controllers/encrypt.go
+   ↓ 调 utils.Encrypt(data)
+utils/crypto.go
+   ↑ 提供加密和解密能力
+   ↓ 解密后获取 imageID
+models/image.go
+   ↑ 模拟数据库，查找图片路径
+storage/uploads/
+   ↓ 图片文件存储位置
+
+1.先写对原始信息的加密函数。
+！常用加密函数为数据类型为：byte[]
+func Encrypt(data []byte) []byte
+
+参考网路：https://blog.csdn.net/weixin_57052634/article/details/146313875?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-1-146313875-blog-126015480.235^v43^pc_blog_bottom_relevance_base9&spm=1001.2101.3001.4242.2&utm_relevant_index=3
+使用AES-CBC加密：
+
+明文
+ ↓
+PKCS7 Padding
+ ↓
+随机生成 IV（16字节）
+ ↓
+AES-CBC 加密（key + IV）
+ ↓
+[IV][密文]
+
+初步完成了从自己的库里面读取图片后，是不是可以尝试通过url连接去访问其他服务器的图片（爬虫？）
+以及可能会被ban的可能性，为什么。
