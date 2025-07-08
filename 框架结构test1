@@ -63,3 +63,22 @@ AES 解密
 
 初步完成了从自己的库里面读取图片后，是不是可以尝试通过url连接去访问其他服务器的图片（爬虫？）
 以及可能会被ban的可能性，为什么。
+
+1.utils/crypto.go中：定义了加密解密功能函数，AES-CBC
+2.在controllers/encrpypt中：
+
+ctx.Query("filename")    url---localhost:8080/encrypt?filename=images20%1.jfif
+
+定义密钥，由url获取的文件名读取文件内容，加密，并存储到DB(GORM)--(SQLITE)
+
+3.在controllers/decrpypt中：
+
+通过id读取在表中的实例，并解密（图片信息和filename），读取图片文件
+
+[密文Base64] → 解码Base64 → 解密AES → 拆出 filename + imageBytes
+      ↓
+[还原文件]
+      ↓
+os.WriteFile("storage/decrypted/"+filename, imageBytes, 0644)
+      ↓
+浏览器访问：http://localhost:8080/static/decrypted/filename
