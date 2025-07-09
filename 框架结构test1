@@ -48,14 +48,13 @@ AES加密
 
 接口 B：输入加密文本 → 解密 → 查DB → 返回图片URL
 POST /decrypt
-
 请求内容：加密文本
 处理步骤：
 解 Base64
 AES 解密
-得到原始图片ID/标识
-查数据库
-返回图片地址
+得到原始图片的名称和二进制数据流
+响应头：动态读取文件格式（filename）
+并加载到客户端（http.ServeContent内置库）
 
 
 用 SQLite 数据库存储文件名 + 加密文本（或 ID 对应关系）
@@ -67,7 +66,7 @@ AES 解密
 1.utils/crypto.go中：定义了加密解密功能函数，AES-CBC
 2.在controllers/encrpypt中：
 
-ctx.Query("filename")    url---localhost:8080/encrypt?filename=images20%1.jfif
+ctx.Query("filename")    url---http://localhost:8080/encrypt?filename=images2.jfif
 
 定义密钥，由url获取的文件名读取文件内容，加密，并存储到DB(GORM)--(SQLITE)
 
@@ -79,6 +78,6 @@ ctx.Query("filename")    url---localhost:8080/encrypt?filename=images20%1.jfif
       ↓
 [还原文件]
       ↓
-os.WriteFile("storage/decrypted/"+filename, imageBytes, 0644)
+http.ServeContent(ctx.Writer, ctx.Request, filename, time.Now(), bytes.NewReader(imageBytes))
       ↓
-浏览器访问：http://localhost:8080/static/decrypted/filename
+浏览器访问：http://localhost:8080/decrypt?id=3
