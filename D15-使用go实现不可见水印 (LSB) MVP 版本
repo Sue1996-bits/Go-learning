@@ -4,3 +4,8 @@ Phase 0: 环境准备与安全重构
 日志系统引入： 引入slog，替换掉项目中所有的fmt.Println和log，建立结构化日志标准。
 项目结构优化： 创建services/目录和middlewares/目录，为后续开发做好准备。
 配置管理： 创建一个config包，用于统一加载和管理所有配置（环境变量、默认值等）。
+
+1.数据库迁移：
+/db/db.go
+/db/migration.go
+/db/watermark_repository.go
