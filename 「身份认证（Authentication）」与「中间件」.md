@@ -53,6 +53,49 @@ Payload 部分默认是不加密的，一定不要将隐私信息存放在 Paylo
 
 即服务器只需要保存一个统一的Secret(密钥)即可。
 
+
+p3：gin 中间件
+------
+中间件位置：位于发起请求和请求结果返回之间，请求和业务处理逻辑之间增加的操作。
+
+中间件作用：将业务重复进行开发：多用于身份认证等...
+
+自定义Gin的中间件
+
+·类型是func函数
+·返回值类型为HandlerFunc
+```
+type HandlerFunc func(*Context)
+```
+
+即：Gin中的中间件必须是一个gin.HandlerFunc类型。
+
+调用中间件，main.go 
+```
+func main() {
+	r := gin.New()  //r是路由
+
+	r.Use(costTime())  //调用自定义的中间件。
+  ...
+}
+```
+
+多个请求，想单独的为某个接口解析来使用中间件的话，那么可以在接口解析的方法当中对其单独的使用，使用中间件作为参数传递进去。
+```
+func (group *RouterGroup) GET(relativePath string, handlers ...HandlerFunc) IRoutes
+//第二个是可变一类的参数
+
+engine.GET("/get", RequestInfo(), func(context *gin.Context) {
+ 
+})
+```
+Next函数：
+
+想输出业务处理结果(一般执行于中间件之后)？
+
+context.Next函数可以将中间件代码的执行顺序一分为二，Next函数调用之前的代码在请求处理之前之前，当程序执行到context.Next时，会中断向下执行，转而先去执行具体的业务逻辑，执行完业务逻辑处理函数之后，程序会再次回到context.Next处，继续执行中间件后续的代码。
+
+
 ------
 著作权归JavaGuide(javaguide.cn)所有
 基于MIT协议
