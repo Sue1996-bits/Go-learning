@@ -29,9 +29,29 @@ different with `Token`:获得 Token 之后，一般会选择存放在 localStora
 
 p2：认证授权-JWT
 ------
-JWT （JSON Web Token） 是目前最流行的跨域认证解决方案，是一种基于 Token 的认证授权机制--一种规范化之后的 JSON 结构的 Token。
+JWT （JSON Web Token） 是目前最流行的跨域认证解决方案，是一种基于 Token 的认证授权机制--一种规范化之后的 JSON 结构的 Token（令牌）。
 
 JWT 自身包含了身份验证所需要的所有信息，因此，我们的服务器不需要存储 Session 信息。
+
+JWT 本质上就是一组字串，通过（.）切分成三个为 Base64 编码的部分：xxxxx.yyyyy.zzzzz
+
+1.xxxxx--Header（头部） : 描述 JWT 的元数据，定义了生成Signature的算法以及 Token 的类型。
+<img width="1324" height="664" alt="image" src="https://github.com/user-attachments/assets/7c604363-d373-4097-b174-5d12f66239cc" />
+
+2.yyyyy--Payload（载荷） : 用来存放实际需要传递的数据，包含声明（Claims），如sub（subject，主题）、jti（JWT ID）。
+<img width="1340" height="950" alt="image" src="https://github.com/user-attachments/assets/f21cdb57-3a50-4a91-9fe8-2150daea23a3" />
+
+Claims(声明，包含 JWT 的相关信息)。--三种。
+Payload 部分默认是不加密的，一定不要将隐私信息存放在 Payload 当中！！！
+
+3.zzzzz--Signature（签名）：服务器通过 Payload、Header（前两者） 和一个密钥(Secret)使用 Header 里面指定的签名算法（默认是 HMAC SHA256）生成。
+<img width="1374" height="830" alt="image" src="https://github.com/user-attachments/assets/0c5360e4-10f4-4827-b463-d3acf7600cba" />
+
+1.2基于 JWT 进行身份验证
+<img width="1282" height="754" alt="image" src="https://github.com/user-attachments/assets/641ae3ac-0624-48b4-932e-bffd6ac094cc" />
+服务器通过 Payload、Header 和 Secret(密钥)创建 JWT 并将 JWT 发送给客户端。客户端接收到 JWT 之后，会将其保存在 Cookie 或者 localStorage 里面，以后客户端发出的所有请求都会携带这个令牌。
+
+即服务器只需要保存一个统一的Secret(密钥)即可。
 
 ------
 著作权归JavaGuide(javaguide.cn)所有
