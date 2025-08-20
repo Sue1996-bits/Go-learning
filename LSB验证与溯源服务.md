@@ -114,3 +114,23 @@ func (ctrl *VerificationController) HandleExtract(c *gin.Context) {
 ```
 
 2.**业务阶段：信息匹配与溯源** —— 利用提取出的信息，在我们的日志系统中找到对应的记录，从而锁定泄
+
+
+## 问题
+1.postman乱码
+
+<img width="1176" height="304" alt="image" src="https://github.com/user-attachments/assets/f8bba851-ef2a-4518-a3bc-efa3401433ee" />
+
+
+直接原因：二进制数据直接放进 JSON。
+
+溯源：
+1.GenerateID返回十六进制编码的哈希值
+
+2.ProcessImage中调用EmbedWatermark	// 将水印ID转换为二进制：watermarkBits := stringToBits(watermarkID)嵌入图片
+
+解决btyeToString：
+
+<img width="1148" height="412" alt="image" src="https://github.com/user-attachments/assets/e8fcaf88-46a4-423c-bdeb-5f860503ef02" />
+对应不上数据库值。
+
